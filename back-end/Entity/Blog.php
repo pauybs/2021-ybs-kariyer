@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BlogRepository;
+use App\Traits\DoctrineIdTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,7 +14,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Blog
 {
-
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="blogUser")
@@ -66,9 +66,36 @@ class Blog
      */
     private $slug;
 
+    /**
+     * @ORM\OneToMany(targetEntity=EvaluationMessage::class, mappedBy="blog", orphanRemoval=true)
+     */
+    private $evaluationMessageBlog;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $spotify;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $youtube;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $soundcloud;
+
+
     public function __construct()
     {
         $this->blogImageBlog = new ArrayCollection();
+        $this->evaluationMessageBlog = new ArrayCollection();
     }
 
     public function getId()
@@ -210,6 +237,84 @@ class Blog
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|EvaluationMessage[]
+     */
+    public function getEvaluationMessageBlog(): Collection
+    {
+        return $this->evaluationMessageBlog;
+    }
+
+    public function addEvaluationMessageBlog(EvaluationMessage $evaluationMessageBlog): self
+    {
+        if (!$this->evaluationMessageBlog->contains($evaluationMessageBlog)) {
+            $this->evaluationMessageBlog[] = $evaluationMessageBlog;
+            $evaluationMessageBlog->setBlog($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluationMessageBlog(EvaluationMessage $evaluationMessageBlog): self
+    {
+        if ($this->evaluationMessageBlog->removeElement($evaluationMessageBlog)) {
+            // set the owning side to null (unless already changed)
+            if ($evaluationMessageBlog->getBlog() === $this) {
+                $evaluationMessageBlog->setBlog(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(?int $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getSpotify(): ?string
+    {
+        return $this->spotify;
+    }
+
+    public function setSpotify(?string $spotify): self
+    {
+        $this->spotify = $spotify;
+
+        return $this;
+    }
+
+    public function getYoutube(): ?string
+    {
+        return $this->youtube;
+    }
+
+    public function setYoutube(?string $youtube): self
+    {
+        $this->youtube = $youtube;
+
+        return $this;
+    }
+
+    public function getSoundcloud(): ?string
+    {
+        return $this->soundcloud;
+    }
+
+    public function setSoundcloud(?string $soundcloud): self
+    {
+        $this->soundcloud = $soundcloud;
 
         return $this;
     }
